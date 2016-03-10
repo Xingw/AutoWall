@@ -1,0 +1,37 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.huster.xingw.autowall"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    //google_support_jar
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.0.0+'
+    //依赖注入
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.squareup.okhttp:okhttp:2.2.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
+    compile 'com.orhanobut:logger:1.11'
+    compile 'com.github.bumptech.glide:glide:3.6.0'
+    compile files('libs/gson-2.3.1.jar')
+    compile files('libs/rxjava-1.0.4.jar')
+    compile files('libs/retrofit-1.9.0.jar')
+}
