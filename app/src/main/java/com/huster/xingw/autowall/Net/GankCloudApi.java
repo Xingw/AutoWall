@@ -37,7 +37,7 @@ public class GankCloudApi {
     }
 
     private final GankCloudService mWebService;
-    public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+    public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
     public GankCloudApi() {
         Cache cache;
@@ -95,8 +95,8 @@ public class GankCloudApi {
                 @Path("page") int page
         );
     }
-    public Observable<GoodsResult> getAllGoods(int limit, int page){
-        return mWebService.getAllGoods(limit,page);
+    public Observable<GoodsResult> getBenefitsGoods(int limit, int page){
+        return mWebService.getBenefitsGoods(limit,page);
     }
 
 }

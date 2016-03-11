@@ -1,6 +1,8 @@
 package com.huster.xingw.autowall.Utils;
 
 
+import android.os.Environment;
+
 import com.huster.xingw.autowall.Model.Wall;
 
 import java.text.SimpleDateFormat;
@@ -16,8 +18,15 @@ public class Util {
     public static boolean isnewday(Realm realm){
         Wall wall = realm.where(Wall.class)
                 .findFirst();
+        if (null == wall) return true;
+        return wall.getPublishedAt().equals(getTimeNow());
+    }
+
+    public static String getTimeNow(){
         SimpleDateFormat    sDateFormat    =   new SimpleDateFormat("yyyy-MM-dd");
         String date=sDateFormat.format(new Date());
-        return wall.getDate().equals(date);
+        return date;
     }
+
+
 }
