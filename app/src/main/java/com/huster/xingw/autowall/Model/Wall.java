@@ -6,7 +6,7 @@ import io.realm.RealmObject;
  * Created by Xingw on 2016/3/11.
  */
 public class Wall extends RealmObject{
-    String date;
+    private String date;
 
     public String getDate() {
         return date;

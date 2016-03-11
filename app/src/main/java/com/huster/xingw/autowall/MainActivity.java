@@ -1,14 +1,20 @@
 package com.huster.xingw.autowall;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.huster.xingw.autowall.Utils.Util;
+import com.orhanobut.logger.Logger;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.processor.Utils;
 
@@ -27,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Logger.w("更新了");
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         context = getApplicationContext();
         realm.getInstance(this);
         fab.setImageResource(R.drawable.ic_action_rotate_left);
