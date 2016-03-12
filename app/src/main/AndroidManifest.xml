@@ -25,6 +25,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/paths"/>
         </provider>
+        <!-- service配置开始 -->
+        <service android:name=".service.service"></service>
+        <!-- service配置结束-->
+        <receiver android:name=".service.service$BootBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_TICK"></action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

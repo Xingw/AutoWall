@@ -4,18 +4,14 @@ import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -35,9 +31,7 @@ import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnLongClick;
 import io.realm.Realm;
-import io.realm.processor.Utils;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -51,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
     FrameLayout frameLayout;
 
     private static Realm mRealm;
+    private static Wall mywall;
     public static Context context;
-
     public static Context getContext() {
         return context;
     }
@@ -69,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                     Wall wall = Wall.queryImageById(mRealm, goods.get_id());
                     if (null == wall) wall = mRealm.createObject(Wall.class);
                     Wall.updateDbGoods(wall, goods);
+                    mywall = wall;
                     setImageToWallpaper(wall,true);
                 }
                 mRealm.commitTransaction();
@@ -113,9 +108,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void refreshGoods() {
         if (!Util.isnewday(mRealm)) {
+            Toast.makeText(this,"今天没啥好更新的",Toast.LENGTH_SHORT).show();
             return;
         }
-
+        Toast.makeText(this,"新的一天到来了，待我更新壁纸",Toast.LENGTH_SHORT).show();
         GankCloudApi.getIns()
                 .getBenefitsGoods(1, 1)
                 .cache()
@@ -151,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
         Glide.with(this).load(wall.getUrl()).asBitmap().into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                Toast.makeText(getContext(),"图片下载成功",Toast.LENGTH_SHORT).show();
                 Bitmap mBitmap = resource;
                 frameLayout.setBackground(new BitmapDrawable(mBitmap));
                 if(set) {
@@ -198,6 +195,9 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CODE_SET_WALLPAPER)
                 Toast.makeText(this, "壁纸设置成功", Toast.LENGTH_SHORT).show();
+                mRealm.beginTransaction();
+                mywall.setToday(true);
+                mRealm.commitTransaction();
         }
     }
 }

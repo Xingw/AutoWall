@@ -1,7 +1,5 @@
 package com.huster.xingw.autowall.Model;
 
-import com.huster.xingw.autowall.Utils.Util;
-
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
@@ -26,7 +24,7 @@ public class Wall extends RealmObject{
     private String url;
     private boolean used;
     private String createdAt;
-
+    private boolean isToday = false;
     public static Wall queryImageById(Realm realm, String objectId){
         RealmResults<Wall> results =  realm.where(Wall.class).equalTo("_id",objectId).findAll();
         if(results.size() > 0){
@@ -47,6 +45,14 @@ public class Wall extends RealmObject{
         dbItem.setCreatedAt(goods.getCreatedAt());
 //        dbItem.setUpdatedAt(goods.getUpdatedAt());
         return dbItem;
+    }
+
+    public boolean isToday() {
+        return isToday;
+    }
+
+    public void setToday(boolean today) {
+        isToday = today;
     }
 
     public int getWidth() {
