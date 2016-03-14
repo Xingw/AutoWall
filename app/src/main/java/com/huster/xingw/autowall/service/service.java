@@ -1,6 +1,7 @@
 package com.huster.xingw.autowall.service;
 
 import android.app.ActivityManager;
+import android.app.IntentService;
 import android.app.Service;
 import android.app.WallpaperManager;
 import android.content.BroadcastReceiver;
@@ -21,7 +22,9 @@ import com.huster.xingw.autowall.Model.Goods;
 import com.huster.xingw.autowall.Model.GoodsResult;
 import com.huster.xingw.autowall.Model.Wall;
 import com.huster.xingw.autowall.Net.GankCloudApi;
+import com.huster.xingw.autowall.Receiver.BootBroadcastReceiver;
 import com.huster.xingw.autowall.Utils.PictUtil;
+import com.huster.xingw.autowall.Utils.RealmHelper;
 import com.huster.xingw.autowall.Utils.Util;
 import com.orhanobut.logger.Logger;
 
@@ -36,39 +39,51 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Xingw on 2016/3/12.
  */
-public class service extends Service {
-    boolean isServiceRunning = false;
+public class service extends IntentService {
     Realm mRealm;
 
+    public service() {
+        super("AutoWall");
+    }
+
     @Override
-    public void onCreate() {
-        super.onCreate();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_TIME_TICK);
-        BootBroadcastReceiver receiver = new BootBroadcastReceiver();
-        registerReceiver(receiver, filter);
-        mRealm = Realm.getInstance(this);
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        flags = START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        Logger.d("启动了服务");
+        mRealm = Realm.getInstance(getBaseContext() );
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 while (true) {
-                    Wall wall = mRealm.where(Wall.class).findFirst();
-                    if (!wall.isToday()) {
+                    if (Util.isnewday(mRealm)) {
                         //检查是否联网
-                        if (Util.isWifiEnabled(getBaseContext())) {
+                        if (!Util.isWifiConnected(getBaseContext())) {
                             try {
-                                sleep(60000);
+                                Logger.d("没联网，等待1分钟");
+                                Thread.sleep(30000);//等待1分钟
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
                         } else {
+                            Logger.d("开始获取数据");
                             //从网络获取数据
-
+                            refreshGoods();
+                            try {
+                                Thread.sleep(60000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     } else {
                         try {
-                            sleep(3600000);
+                            Logger.d("长时间等待");
+                            Thread.sleep(3600000);//等待1小时
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -79,50 +94,12 @@ public class service extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    public class BootBroadcastReceiver extends BroadcastReceiver {
-
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_TIME_TICK)) {
-                //检查Service状态
-                ActivityManager manager = (ActivityManager) getApplicationContext()
-                        .getSystemService(Context.ACTIVITY_SERVICE);
-                for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-                    if ("com.huster.xingw.autowall".equals(service.service.getClassName())) {
-                        isServiceRunning = true;
-                    }
-                }
-                if (!isServiceRunning) {
-                    Intent i = new Intent(context, service.class);
-                    context.startService(i);
-                }
-            }
-        }
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        isServiceRunning = false;
+        BootBroadcastReceiver.setServiceRunning(false);
     }
 
     public void refreshGoods() {
-        if (!Util.isnewday(mRealm)) {
-            Toast.makeText(this, "今天没啥好更新的", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Toast.makeText(this, "新的一天到来了，待我更新壁纸", Toast.LENGTH_SHORT).show();
         GankCloudApi.getIns()
                 .getBenefitsGoods(1, 1)
                 .cache()
@@ -144,18 +121,19 @@ public class service extends Service {
 
         @Override
         public void onNext(final GoodsResult goodsResult) {
+            Realm ThreadRealm = Realm.getInstance(getBaseContext() );
             if (null != goodsResult && null != goodsResult.getResults()) {
-                mRealm.beginTransaction();
+                ThreadRealm.beginTransaction();
                 for (Goods goods : goodsResult.getResults()) {
-                    Wall wall = Wall.queryImageById(mRealm, goods.get_id());
-                    if (null == wall) wall = mRealm.createObject(Wall.class);
+                    Wall wall = Wall.queryImageById(ThreadRealm, goods.get_id());
+                    if (null == wall) wall = ThreadRealm.createObject(Wall.class);
                     Wall.updateDbGoods(wall, goods);
                     setImageToWallpaper(wall);
                 }
-                mRealm.commitTransaction();
+                ThreadRealm.commitTransaction();
                 return;
             }
-            mRealm.cancelTransaction();
+            ThreadRealm.cancelTransaction();
         }
     };
 
@@ -167,11 +145,8 @@ public class service extends Service {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 Bitmap mBitmap = resource;
-                try {
-                    setWallpaper(mBitmap);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                SetWallPaper(mBitmap);
+                Logger.d("更新了壁纸");
             }
 
             @Override

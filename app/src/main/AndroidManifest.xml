@@ -3,6 +3,8 @@
           xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.SET_WALLPAPER"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/icon"
@@ -28,11 +30,13 @@
         <!-- service配置开始 -->
         <service android:name=".service.service"></service>
         <!-- service配置结束-->
-        <receiver android:name=".service.service$BootBroadcastReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.TIME_TICK"></action>
-            </intent-filter>
-        </receiver>
+        <!--<receiver android:name=".Receiver.BootBroadcastReceiver">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.TIME_TICK"></action>-->
+                <!--<action android:name="android.intent.action.BOOT_COMPLETED"></action>-->
+                <!--<action android:name="android.intent.action.USER_PRESENT"></action>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
     </application>
 
 </manifest>
