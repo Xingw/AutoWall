@@ -19,13 +19,22 @@ import io.realm.RealmResults;
  * Created by Xingw on 2016/3/10.
  */
 public class Util {
+    //"publishedAt": "2016-03-11T12:37:20.4Z",
     public static boolean isnewday(Realm realm){
+        if(getWeekNow().equals("星期六") || getWeekNow().equals("星期日")){
+            //周末不更新
+            return false;
+        }
         Wall wall = realm.where(Wall.class)
                 .findFirst();
         if (null == wall) return true;
-        return wall.getPublishedAt().equals(getTimeNow());
+        return wall.getPublishedAt().substring(0,10).equals(getTimeNow());
     }
-
+    public static String getWeekNow(){
+        SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
+        String data = dateFm.format(new Date());
+        return data;
+    }
     public static String getTimeNow(){
         SimpleDateFormat    sDateFormat    =   new SimpleDateFormat("yyyy-MM-dd");
         String date=sDateFormat.format(new Date());

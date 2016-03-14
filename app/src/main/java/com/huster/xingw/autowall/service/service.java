@@ -66,7 +66,7 @@ public class service extends IntentService {
                         if (!Util.isWifiConnected(getBaseContext())) {
                             try {
                                 Logger.d("没联网，等待1分钟");
-                                Thread.sleep(30000);//等待1分钟
+                                Thread.sleep(60000);//等待1分钟
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
