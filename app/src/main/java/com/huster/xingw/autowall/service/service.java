@@ -85,7 +85,6 @@ public class service extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mRealm.close();
         BootBroadcastReceiver.setServiceRunning(false);
     }
 

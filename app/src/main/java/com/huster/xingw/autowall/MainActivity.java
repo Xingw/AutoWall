@@ -122,8 +122,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void initView() {
         Wall wall = mRealm.where(Wall.class).findFirst();
-        if(wall !=null)
-        setImageToWallpaper(wall,false);
+        if(wall !=null) {
+            setImageToWallpaper(wall, false);
+        }else{
+            refreshGoods();
+        }
     }
 
     public void refreshGoods() {
@@ -169,10 +172,10 @@ public class MainActivity extends AppCompatActivity {
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 Toast.makeText(getContext(),"图片下载成功",Toast.LENGTH_SHORT).show();
                 Bitmap mBitmap = resource;
-                SetWallPaper(mBitmap);
                 imageView.setBackground(new BitmapDrawable(mBitmap));
                 if(set) {
-                    saveImgFileToLocal(wall, mBitmap);
+                    SetWallPaper(mBitmap);
+//                    saveImgFileToLocal(wall, mBitmap);
                 }
             }
 
