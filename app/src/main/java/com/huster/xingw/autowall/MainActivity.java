@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         alarmManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
         Intent intent = new Intent(MainActivity.this,service.class);
         final PendingIntent pi = PendingIntent.getService(this,0,intent,0);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,0,60000,pi);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,0,36000000,pi);
     }
 
     public void initView() {

@@ -60,35 +60,24 @@ public class service extends IntentService {
             @Override
             public void run() {
                 super.run();
-                while (true) {
                     if (Util.isnewday(mRealm)) {
-                        //检查是否联网
-                        if (!Util.isWifiConnected(getBaseContext())) {
-                            try {
-                                Logger.d("没联网，等待1分钟");
-                                Thread.sleep(60000);//等待1分钟
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                        while (true) {
+                            //检查是否联网
+                            if (!Util.isWifiConnected(getBaseContext())) {
+                                try {
+                                    Logger.d("没联网，等待1分钟");
+                                    Thread.sleep(30000);//等待1分钟
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Logger.d("开始获取数据");
+                                //从网络获取数据
+                                refreshGoods();
+                                return;
                             }
-                        } else {
-                            Logger.d("开始获取数据");
-                            //从网络获取数据
-                            refreshGoods();
-                            try {
-                                Thread.sleep(60000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    } else {
-                        try {
-                            Logger.d("长时间等待");
-                            Thread.sleep(3600000);//等待1小时
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
                     }
-                }
             }
         }.run();
     }
@@ -96,6 +85,7 @@ public class service extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mRealm.close();
         BootBroadcastReceiver.setServiceRunning(false);
     }
 

@@ -28,7 +28,7 @@ public class Util {
         Wall wall = realm.where(Wall.class)
                 .findFirst();
         if (null == wall) return true;
-        return wall.getPublishedAt().substring(0,10).equals(getTimeNow());
+        return !wall.getPublishedAt().substring(0,10).equals(getTimeNow());
     }
     public static String getWeekNow(){
         SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
