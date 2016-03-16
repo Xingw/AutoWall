@@ -1,5 +1,7 @@
 package com.huster.xingw.autowall.Net;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.huster.xingw.autowall.MainActivity;
@@ -25,11 +27,11 @@ public class GankCloudApi {
 
     public static GankCloudApi instance;
 
-    public static GankCloudApi getIns() {
+    public static GankCloudApi getIns(Context context) {
         if (null == instance) {
             synchronized (GankCloudApi.class) {
                 if (null == instance) {
-                    instance = new GankCloudApi();
+                    instance = new GankCloudApi(context);
                 }
             }
         }
@@ -39,11 +41,11 @@ public class GankCloudApi {
     private final GankCloudService mWebService;
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
-    public GankCloudApi() {
+    public GankCloudApi(Context context) {
         Cache cache;
         OkHttpClient okHttpClient = null;
         try {
-            File cacheDir = new File(MainActivity.getContext().getCacheDir().getPath(),
+            File cacheDir = new File(context.getCacheDir().getPath(),
                     "gank_cache.json") ;
             cache = new Cache(cacheDir,10 * 1024 * 1024);
             okHttpClient = new OkHttpClient();

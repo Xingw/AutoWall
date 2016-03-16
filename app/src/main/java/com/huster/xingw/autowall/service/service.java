@@ -89,7 +89,7 @@ public class service extends IntentService {
     }
 
     public void refreshGoods() {
-        GankCloudApi.getIns()
+        GankCloudApi.getIns(this)
                 .getBenefitsGoods(1, 1)
                 .cache()
                 .subscribeOn(Schedulers.newThread())

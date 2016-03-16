@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         alarmManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
         Intent intent = new Intent(MainActivity.this,service.class);
         final PendingIntent pi = PendingIntent.getService(this,0,intent,0);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,0,36000000,pi);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,0,3600000,pi);
     }
 
     public void initView() {
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         Toast.makeText(this,"新的一天到来了，待我更新壁纸",Toast.LENGTH_SHORT).show();
-        GankCloudApi.getIns()
+        GankCloudApi.getIns(this)
                 .getBenefitsGoods(1, 1)
                 .cache()
                 .subscribeOn(Schedulers.newThread())
